@@ -1,534 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AKA 1908 Maze Game</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            overflow: hidden;
-        }
-        #gameContainer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: #1a1a1a;
-        }
-        #menuScreen, #levelCompleteScreen, #gameCompleteScreen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .menuBg {
-            background: linear-gradient(to bottom right, #FF69B4, #009B48);
-        }
-        .levelBg {
-            background: linear-gradient(to bottom right, #009B48, #FF69B4);
-        }
-        .completeBg {
-            background: linear-gradient(to bottom right, #FF69B4, #009B48);
-        }
-        .card {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            text-align: center;
-            max-width: 600px;
-        }
-        h1 {
-            font-size: 3em;
-            margin-bottom: 20px;
-        }
-        h2 {
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-        .pink { color: #FF69B4; }
-        .green { color: #009B48; }
-        .pillarBox, .instructionBox {
-            text-align: left;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        .pillarBox {
-            background: #ffe6f0;
-        }
-        .instructionBox {
-            background: #e6f5ed;
-        }
-        .pillarBox h3 {
-            color: #FF69B4;
-            margin-bottom: 10px;
-        }
-        .instructionBox h3 {
-            color: #009B48;
-            margin-bottom: 10px;
-        }
-        button {
-            padding: 15px 40px;
-            font-size: 1.2em;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            color: white;
-            transition: all 0.3s;
-        }
-        .pinkBtn {
-            background: #FF69B4;
-        }
-        .pinkBtn:hover {
-            background: #FF1493;
-        }
-        .greenBtn {
-            background: #009B48;
-        }
-        .greenBtn:hover {
-            background: #007a3a;
-        }
-        #gameCanvas {
-            border: 4px solid #FF69B4;
-            border-radius: 8px;
-            display: none;
-        }
-        #controls {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            grid-template-columns: repeat(3, 60px);
-            gap: 10px;
-        }
-        .controlBtn {
-            width: 60px;
-            height: 60px;
-            background: #FF69B4;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: manipulation;
-        }
-        .controlBtn:active {
-            background: #FF1493;
-        }
-        #menuBtn {
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AKA 1908 Maze Game</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, #f3e5f5, #e1bee7);
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+      touch-action: none;
+      height: 100%;
+    }
+
+    #gameContainer {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    canvas {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      width: 95vw;
+      height: auto;
+      max-width: 600px;
+      aspect-ratio: 1 / 1;
+    }
+
+    #hud {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #4a148c;
+      text-align: center;
+    }
+
+    #hud h1 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    #pillarList {
+      margin-top: 5px;
+      font-size: 0.8rem;
+      color: #6a1b9a;
+    }
+
+    #controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      width: 80%;
+      max-width: 400px;
+    }
+
+    .btn {
+      background: rgba(206, 147, 216, 0.2);
+      color: #4a148c;
+      border: 2px solid rgba(74, 20, 140, 0.3);
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.1s, background 0.3s, border 0.3s;
+    }
+
+    .btn:hover {
+      background: rgba(206, 147, 216, 0.3);
+      border-color: rgba(74, 20, 140, 0.5);
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+      background: rgba(186, 104, 200, 0.3);
+      border-color: rgba(74, 20, 140, 0.6);
+    }
+
+    @media (min-width: 768px) {
+      #hud h1 {
+        font-size: 2rem;
+      }
+      #pillarList {
+        font-size: 1rem;
+      }
+      .btn {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div id="menuScreen" class="menuBg" style="display: flex;">
-        <div class="card">
-            <h1 class="pink">AKA 1908</h1>
-            <h2 class="green">Maze of Excellence</h2>
-            
-            <div class="pillarBox">
-                <h3>The Five Pillars:</h3>
-                <p>• Scholarship</p>
-                <p>• Sisterhood</p>
-                <p>• Leadership</p>
-                <p>• Social Justice</p>
-                <p>• Service to all manking</p>
-            </div>
-            
-            <div class="instructionBox">
-                <h3>How to Play:</h3>
-                <p>• Collect all pearls (white circles)</p>
-                <p>• Reach the crown to complete each level</p>
-                <p>• Use arrow keys or WASD to move</p>
-                <p>• On mobile: Use on-screen buttons</p>
-            </div>
-            
-            <button class="pinkBtn" onclick="startGame()">Start Journey</button>
-        </div>
+  <div id="gameContainer">
+    <div id="hud">
+      <h1>AKA 1908 Maze</h1>
+      <div id="pillarList">Scholarship • Sisterhood • Leadership • Social Justice • Service to All Mankind</div>
     </div>
-
-    <div id="levelCompleteScreen" class="levelBg">
-        <div class="card">
-            <h1 class="pink">Level Complete!</h1>
-            <h2 class="green" id="pillarName"></h2>
-            <button class="greenBtn" onclick="nextLevel()">Next Level</button>
-        </div>
-    </div>
-
-    <div id="gameCompleteScreen" class="completeBg">
-        <div class="card">
-            <h1 class="pink">Congratulations!</h1>
-            <h2 class="green">You are Mr. Pink Panther!</h2>
-            <h2 class="pink">AKA 1908</h2>
-            <p style="font-size: 1.2em; margin: 20px 0;">You've mastered all Five Pillars!</p>
-            <button class="pinkBtn" onclick="restartGame()">Play Again</button>
-        </div>
-    </div>
-
-    <div id="gameContainer">
-        <canvas id="gameCanvas" width="900" height="500"></canvas>
-        <button id="menuBtn" class="greenBtn" onclick="returnToMenu()" style="display: none;">Return to Menu</button>
-    </div>
-
+    <canvas id="gameCanvas"></canvas>
     <div id="controls">
-        <div></div>
-        <button class="controlBtn" id="upBtn">↑</button>
-        <div></div>
-        <button class="controlBtn" id="leftBtn">←</button>
-        <div></div>
-        <button class="controlBtn" id="rightBtn">→</button>
-        <div></div>
-        <button class="controlBtn" id="downBtn">↓</button>
-        <div></div>
+      <button class="btn" id="leftBtn">◀</button>
+      <button class="btn" id="upBtn">▲</button>
+      <button class="btn" id="downBtn">▼</button>
+      <button class="btn" id="rightBtn">▶</button>
     </div>
+  </div>
 
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        const TILE = 25;
-        const WIDTH = 900;
-        const HEIGHT = 500;
-        const PINK = '#FF69B4';
-        const GREEN = '#009B48';
-        const GOLD = '#FFD700';
-        const WHITE = '#FFFFFF';
-        
-        const PILLARS = [
-            "Scholarship",
-            "Service to All Mankind",
-            "Sisterhood",
-            "Finer Womanhood",
-            "Leadership"
-        ];
-        
-        const LEVELS = [
-            [
-                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-                "X S    X  P    X   P    X            X",
-                "X XXXX XXXX XXXX XXXX XXXX XXXX      X",
-                "X                      P             X",
-                "X      XXXX XXXX XXXX XXXX XXXX      X",
-                "X                            P     C X",
-                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-            ],
-            [
-                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-                "X S   XXXX    P   XXXX    P   XXXX   X",
-                "X     XXXX        XXXX        XXXX   X",
-                "X  P         XXXX      XXXX          X",
-                "X     XXXX   XXXX      XXXX   XXXX   X",
-                "X     XXXX      P          P  XXXX C X",
-                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-            ],
-            [
-                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-                "X S P       XXXX       XXXX       XX X",
-                "X     XXXX  XXXX  XXXX XXXX  XXXX XX X",
-                "X     XXXX     P  XXXX    P  XXXX    X",
-                "X        XXXX  XXXX   XXXX  XXXX  XX X",
-                "X  XXXX  XXXX     P       XXXX       X",
-                "X  XXXX              XXXX         C  X",
-                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-            ],
-            [
-                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-                "X S XXXXXXXXXXXXXXXXXXXXXXXXXX  P    X",
-                "X   X                    P   X  XXXX X",
-                "X P X  XXXXXXXXXXXXXX  XXXXX X  XXXX X",
-                "X   X  X         P  X       X       X",
-                "X XXX  X  XXXXXXX   XXXXXXX X  XXXX X",
-                "X XXX  X  X   P        C  X X  XXXX X",
-                "X      X  XXXXXXXXXXXXXXX X X       X",
-                "X XXXX                    X XXXXXXX X",
-                "X XXXXXXXXXXXXXXXXXXXXXXXXX         X",
-                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-            ],
-            [
-                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-                "X S  XXXXX       XXXXXX  XXXX  XXXX  X",
-                "X    X   X       X    X  X  X  X  X  X",
-                "X P  X   X  P    X    X  X  X  X  X  X",
-                "X    X   X       XXXXXX  XXXX  XXXX  X",
-                "X    X   X       X  X    X  X    X   X",
-                "X    XXXXX       X  X    XXXX  XXXX  X",
-                "X                X  X          X     X",
-                "X  P XXXX  XXXX  X  X  XXXX  XXXX   X",
-                "X    X  X  X  X  X  X  X  X     P   X",
-                "X    XXXX  XXXX  XXXX  XXXX  XXXX   X",
-                "X                   P            C   X",
-                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-            ]
-        ];
-        
-        let game = {
-            player: { x: 0, y: 0, size: 15 },
-            walls: [],
-            pearls: [],
-            crown: null,
-            keys: { up: false, down: false, left: false, right: false },
-            speed: 3,
-            collectedPearls: 0,
-            totalPearls: 0,
-            currentLevel: 0,
-            animationId: null
-        };
-        
-        function loadLevel(levelIndex) {
-            const level = LEVELS[levelIndex];
-            game.walls = [];
-            game.pearls = [];
-            game.crown = null;
-            game.collectedPearls = 0;
-            let pearlCount = 0;
-            
-            for (let y = 0; y < level.length; y++) {
-                for (let x = 0; x < level[y].length; x++) {
-                    const char = level[y][x];
-                    const px = x * TILE;
-                    const py = y * TILE;
-                    
-                    if (char === 'X') {
-                        game.walls.push({ x: px, y: py, w: TILE, h: TILE });
-                    } else if (char === 'S') {
-                        game.player.x = px + 7;
-                        game.player.y = py + 7;
-                    } else if (char === 'P') {
-                        game.pearls.push({ x: px + TILE/2, y: py + TILE/2, r: 6 });
-                        pearlCount++;
-                    } else if (char === 'C') {
-                        game.crown = { x: px + 5, y: py + 5, w: TILE - 10, h: TILE - 10 };
-                    }
-                }
-            }
-            
-            game.totalPearls = pearlCount;
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let size = Math.min(window.innerWidth * 0.9, 600);
+    canvas.width = size;
+    canvas.height = size;
+
+    const TILE = 40;
+    const cols = Math.floor(canvas.width / TILE);
+    const rows = Math.floor(canvas.height / TILE);
+
+    const player = { x: 1, y: 1, color: '#4a148c' };
+    const pearls = [];
+    const walls = [];
+    const crown = { x: cols - 2, y: rows - 2, color: 'gold', active: false };
+
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (Math.random() < 0.1 && !(x === 1 && y === 1) && !(x === cols-2 && y === rows-2)) {
+          walls.push({x, y});
         }
-        
-        function checkCollision(x, y, w, h) {
-            for (let wall of game.walls) {
-                if (x < wall.x + wall.w &&
-                    x + w > wall.x &&
-                    y < wall.y + wall.h &&
-                    y + h > wall.y) {
-                    return true;
-                }
-            }
-            return false;
+      }
+    }
+
+    for (let i = 0; i < 5; i++) {
+      pearls.push({x: Math.floor(Math.random()*cols), y: Math.floor(Math.random()*rows), collected:false});
+    }
+
+    const keys = {};
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#f3e5f5';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      walls.forEach(w => {
+        ctx.fillStyle = '#6a1b9a';
+        ctx.fillRect(w.x * TILE, w.y * TILE, TILE, TILE);
+      });
+
+      pearls.forEach(p => {
+        if(!p.collected){
+          ctx.beginPath();
+          ctx.arc(p.x*TILE + TILE/2, p.y*TILE + TILE/2, TILE/5, 0, Math.PI*2);
+          ctx.fillStyle = '#ce93d8';
+          ctx.fill();
         }
-        
-        function update() {
-            let dx = 0, dy = 0;
-            
-            if (game.keys.up) dy -= game.speed;
-            if (game.keys.down) dy += game.speed;
-            if (game.keys.left) dx -= game.speed;
-            if (game.keys.right) dx += game.speed;
-            
-            const newX = game.player.x + dx;
-            if (!checkCollision(newX, game.player.y, game.player.size, game.player.size)) {
-                game.player.x = newX;
-            }
-            
-            const newY = game.player.y + dy;
-            if (!checkCollision(game.player.x, newY, game.player.size, game.player.size)) {
-                game.player.y = newY;
-            }
-            
-            game.pearls = game.pearls.filter(pearl => {
-                const dist = Math.sqrt(
-                    Math.pow(game.player.x + game.player.size/2 - pearl.x, 2) +
-                    Math.pow(game.player.y + game.player.size/2 - pearl.y, 2)
-                );
-                if (dist < pearl.r + game.player.size/2) {
-                    game.collectedPearls++;
-                    return false;
-                }
-                return true;
-            });
-            
-            if (game.crown) {
-                const px = game.player.x;
-                const py = game.player.y;
-                const ps = game.player.size;
-                const c = game.crown;
-                
-                if (px < c.x + c.w &&
-                    px + ps > c.x &&
-                    py < c.y + c.h &&
-                    py + ps > c.y) {
-                    if (game.currentLevel < LEVELS.length - 1) {
-                        showLevelComplete();
-                    } else {
-                        showGameComplete();
-                    }
-                }
-            }
+      });
+
+      if(crown.active){
+        ctx.beginPath();
+        ctx.arc(crown.x*TILE + TILE/2, crown.y*TILE + TILE/2, TILE/3, 0, Math.PI*2);
+        ctx.fillStyle = crown.color;
+        ctx.fill();
+      }
+
+      ctx.beginPath();
+      ctx.arc(player.x*TILE + TILE/2, player.y*TILE + TILE/2, TILE/2.5, 0, Math.PI*2);
+      ctx.fillStyle = player.color;
+      ctx.fill();
+    }
+
+    function isWall(x, y){
+      return walls.some(w => w.x === x && w.y === y);
+    }
+
+    function move(dx, dy){
+      const newX = player.x + dx;
+      const newY = player.y + dy;
+      if(newX < 0 || newY < 0 || newX >= cols || newY >= rows) return;
+      if(isWall(newX, newY)) return;
+      player.x = newX;
+      player.y = newY;
+      checkPearls();
+      checkCrown();
+      draw();
+    }
+
+    function checkPearls(){
+      pearls.forEach(p => {
+        if(!p.collected && p.x === player.x && p.y === player.y){
+          p.collected = true;
+          if(pearls.every(pr => pr.collected)) crown.active = true;
         }
-        
-        function draw() {
-            ctx.fillStyle = GREEN;
-            ctx.fillRect(0, 0, WIDTH, HEIGHT);
-            
-            ctx.fillStyle = PINK;
-            game.walls.forEach(wall => {
-                ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
-            });
-            
-            ctx.fillStyle = WHITE;
-            game.pearls.forEach(pearl => {
-                ctx.beginPath();
-                ctx.arc(pearl.x, pearl.y, pearl.r, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-                ctx.beginPath();
-                ctx.arc(pearl.x - 2, pearl.y - 2, 2, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = WHITE;
-            });
-            
-            if (game.crown) {
-                const c = game.crown;
-                ctx.fillStyle = GOLD;
-                ctx.fillRect(c.x, c.y, c.w, c.h);
-                
-                ctx.beginPath();
-                ctx.moveTo(c.x, c.y);
-                ctx.lineTo(c.x + c.w/4, c.y - 5);
-                ctx.lineTo(c.x + c.w/2, c.y);
-                ctx.lineTo(c.x + 3*c.w/4, c.y - 5);
-                ctx.lineTo(c.x + c.w, c.y);
-                ctx.fill();
-            }
-            
-            ctx.fillStyle = GREEN;
-            ctx.fillRect(game.player.x, game.player.y, game.player.size, game.player.size);
-            ctx.strokeStyle = WHITE;
-            ctx.lineWidth = 2;
-            ctx.strokeRect(game.player.x, game.player.y, game.player.size, game.player.size);
-            
-            ctx.fillStyle = WHITE;
-            ctx.font = '20px Arial';
-            ctx.fillText(`Pearls: ${game.collectedPearls}/${game.totalPearls}`, 10, 30);
-            ctx.fillText(`Pillar: ${PILLARS[game.currentLevel]}`, WIDTH - 300, 30);
-        }
-        
-        function gameLoop() {
-            update();
-            draw();
-            game.animationId = requestAnimationFrame(gameLoop);
-        }
-        
-        function startGame() {
-            document.getElementById('menuScreen').style.display = 'none';
-            document.getElementById('gameCanvas').style.display = 'block';
-            document.getElementById('controls').style.display = 'grid';
-            document.getElementById('menuBtn').style.display = 'block';
-            loadLevel(game.currentLevel);
-            gameLoop();
-        }
-        
-        function showLevelComplete() {
-            cancelAnimationFrame(game.animationId);
-            document.getElementById('gameCanvas').style.display = 'none';
-            document.getElementById('controls').style.display = 'none';
-            document.getElementById('menuBtn').style.display = 'none';
-            document.getElementById('pillarName').textContent = PILLARS[game.currentLevel];
-            document.getElementById('levelCompleteScreen').style.display = 'flex';
-        }
-        
-        function nextLevel() {
-            game.currentLevel++;
-            document.getElementById('levelCompleteScreen').style.display = 'none';
-            document.getElementById('gameCanvas').style.display = 'block';
-            document.getElementById('controls').style.display = 'grid';
-            document.getElementById('menuBtn').style.display = 'block';
-            loadLevel(game.currentLevel);
-            gameLoop();
-        }
-        
-        function showGameComplete() {
-            cancelAnimationFrame(game.animationId);
-            document.getElementById('gameCanvas').style.display = 'none';
-            document.getElementById('controls').style.display = 'none';
-            document.getElementById('menuBtn').style.display = 'none';
-            document.getElementById('gameCompleteScreen').style.display = 'flex';
-        }
-        
-        function restartGame() {
-            game.currentLevel = 0;
-            document.getElementById('gameCompleteScreen').style.display = 'none';
-            document.getElementById('menuScreen').style.display = 'flex';
-        }
-        
-        function returnToMenu() {
-            cancelAnimationFrame(game.animationId);
-            game.currentLevel = 0;
-            document.getElementById('gameCanvas').style.display = 'none';
-            document.getElementById('controls').style.display = 'none';
-            document.getElementById('menuBtn').style.display = 'none';
-            document.getElementById('menuScreen').style.display = 'flex';
-        }
-        
-        // Keyboard controls
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowUp' || e.key === 'w') game.keys.up = true;
-            if (e.key === 'ArrowDown' || e.key === 's') game.keys.down = true;
-            if (e.key === 'ArrowLeft' || e.key === 'a') game.keys.left = true;
-            if (e.key === 'ArrowRight' || e.key === 'd') game.keys.right = true;
-        });
-        
-        document.addEventListener('keyup', (e) => {
-            if (e.key === 'ArrowUp' || e.key === 'w') game.keys.up = false;
-            if (e.key === 'ArrowDown' || e.key === 's') game.keys.down = false;
-            if (e.key === 'ArrowLeft' || e.key === 'a') game.keys.left = false;
-            if (e.key === 'ArrowRight' || e.key === 'd') game.keys.right = false;
-        });
-        
-        // Touch controls
-        function handleButtonDown(direction) {
-            game.keys[direction] = true;
-        }
-        
-        function handleButtonUp() {
-            game.keys.up = false;
-            game.keys.down = false;
-            game.keys.left = false;
-            game.keys.right = false;
-        }
-        
-        ['upBtn', 'downBtn', 'leftBtn', 'rightBtn'].forEach(id => {
-            const btn = document.getElementById(id);
-            const direction = id.replace('Btn', '');
-            
-            btn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                handleButtonDown(direction);
-            });
-            
-            btn.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                handleButtonUp();
-            });
-            
-            btn.addEventListener('mousedown', () => handleButtonDown(direction));
-            btn.addEventListener('mouseup', handleButtonUp);
-        });
-    </script>
+      });
+    }
+
+    function checkCrown(){
+      if(crown.active && player.x === crown.x && player.y === crown.y){
+        alert('Congratulations! You embodied all Five Pillars!');
+        resetGame();
+      }
+    }
+
+    function resetGame(){
+      location.reload();
+    }
+
+    document.addEventListener('keydown', e => {
+      if(e.key === 'ArrowUp') move(0,-1);
+      if(e.key === 'ArrowDown') move(0,1);
+      if(e.key === 'ArrowLeft') move(-1,0);
+      if(e.key === 'ArrowRight') move(1,0);
+    });
+
+    document.getElementById('upBtn').addEventListener('click', ()=>move(0,-1));
+    document.getElementById('downBtn').addEventListener('click', ()=>move(0,1));
+    document.getElementById('leftBtn').addEventListener('click', ()=>move(-1,0));
+    document.getElementById('rightBtn').addEventListener('click', ()=>move(1,0));
+
+    draw();
+  </script>
 </body>
 </html>
