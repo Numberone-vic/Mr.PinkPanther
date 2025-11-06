@@ -186,11 +186,12 @@ const LEVELS = [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 "X S    X      E          E       X   X",
 "X XXXX X XXXX XXXXX   XXXX XXXX X X X",
-"X                X      X    X   X",
+"X X             X      X    X   X   X",
 "X XXXX X XXXX X XXXXX XXXX X XXXX X X",
-"X    E X    E X           X     C X",
+"X    E X    E X           X     C X X",
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
   ],
+  
   // 2 Sisterhood (loops and bridges)
   [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -201,6 +202,7 @@ const LEVELS = [
 "X XXXX X  X      X      X  X    C  X",
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
   ],
+  
   // 3 Leadership (central path, forks)
   [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -212,17 +214,19 @@ const LEVELS = [
 "X    XXXX            XXXX       C  X",
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
   ],
+  
   // 4 Social Justice (symmetry / balance)
   [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 "X S   XXXXXXXXX   P  X  P  XXXXXXXXX X",
 "X     X       X      X      X       X",
 "X  E  X   E   X  E   X   E  X   E   X",
-"X            X      X      X       X",
+"X     X       X      X      X       X",
 "X XXXXX XXXXX XXXXXXXXXXXXXX XXXXXXXX",
 "X        P             E         C  X",
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
   ],
+  
   // 5 Service to All Mankind (final, larger)
   [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -236,7 +240,6 @@ const LEVELS = [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
   ]
 ];
-
 /* ---------------- Canvas, state & setup ---------------- */
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
