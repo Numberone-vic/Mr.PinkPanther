@@ -448,7 +448,7 @@ function draw() {
   else { g.addColorStop(0,'#003d26'); g.addColorStop(1,'#5b003f'); }
   ctx.fillStyle = g; ctx.fillRect(0,0,game.WIDTH,game.HEIGHT);
 
-  ctx.fillStyle = 'rgba(255,105,180,0.12)';
+  ctx.fillStyle = 'rgba(255,105,180,0.6)';
   for(const w of game.walls){
     roundRect(ctx, Math.round(w.x)+1, Math.round(w.y)+1, w.w-2, w.h-2, Math.max(3, game.TILE*0.12));
   }
